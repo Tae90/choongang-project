@@ -9,6 +9,7 @@
 <body>
 	<script type="text/javascript">
 		location.href="loginpage";
+		jsp.변화
 	</script>
 </body>
 </html>
