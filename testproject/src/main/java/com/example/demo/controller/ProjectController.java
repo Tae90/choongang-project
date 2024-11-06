@@ -114,6 +114,8 @@ public class ProjectController {
 		model.addAttribute("search", sns.getSearch());
 		model.addAttribute("keyword", sns.getKeyword());
 		
+		/* 테스트 */
+		
 		return "snslist";
 	}
 
