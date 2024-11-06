@@ -10,5 +10,6 @@
 	<script type="text/javascript">
 		location.href="loginpage";
 	</script>
+	test123
 </body>
 </html>
