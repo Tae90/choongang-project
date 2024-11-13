@@ -362,8 +362,8 @@ public class ProjectController {
 		List<Runner_data> list = service.listfromrd(rd);
 		model.addAttribute("list", list);
 		model.addAttribute("pageNum", pageNum);
-		model.addAttribute("no3", no);
-		model.addAttribute("pp3", pp);
+		model.addAttribute("no4", no);
+		model.addAttribute("pp4", pp);
 
 		return "sns_write_list";
 	}
