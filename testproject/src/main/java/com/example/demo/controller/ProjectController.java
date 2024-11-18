@@ -18,10 +18,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.model.Alarm;
 import com.example.demo.model.Coordinate;
+import com.example.demo.model.Good;
 import com.example.demo.model.Member;
 import com.example.demo.model.Runner;
 import com.example.demo.model.Runner_data;
 import com.example.demo.model.SnsBoard;
+import com.example.demo.service.GoodService;
 import com.example.demo.service.PagingPgm;
 import com.example.demo.service.ProjectService;
 
@@ -35,6 +37,7 @@ import lombok.RequiredArgsConstructor;
 public class ProjectController {
 
 	private final ProjectService service;
+	private final GoodService good_service;
 
 	// 메인페이지로 이동
 	@RequestMapping("/mainpage")
@@ -325,20 +328,27 @@ public class ProjectController {
 	}
 
 	@RequestMapping("/sns_detail")
-	public String sns_detail(@RequestParam(value = "pageNum") String pageNum,
-			@RequestParam(value = "sns_no") String sns_no, Model model) {
-		// 글정보 불러오기
+	public String sns_detail(@RequestParam(value = "pageNum", defaultValue = "1") String pageNum,
+	                         @RequestParam(value = "sns_no", defaultValue = "227") String sns_no, 
+	                         Model model, HttpSession session) {
+	    // 글 정보 불러오기
 		SnsBoard board = service.getboard(Integer.parseInt(sns_no));
-		// 맵에 경로 표현을 위한 테이터 불러오기
-		Runner_data rd = service.getrdata(board.getRunner_data_no());
-		// 좌표값 불러오기
-		Coordinate[] c = service.getcdata(board.getRunner_data_no());
+		
+		// 굿 정보 불러오기
+		Good good_board = good_service.get_good(Integer.parseInt(sns_no));
+		
+	    // 맵에 경로 표현을 위한 데이터 불러오기
+	    Runner_data rd = service.getrdata(board.getRunner_data_no());
+	    // 좌표값 불러오기
+	    Coordinate[] c = service.getcdata(board.getRunner_data_no());
 
-		model.addAttribute("rd", rd);
-		model.addAttribute("c", c);
-		model.addAttribute("pageNum", pageNum);
-		model.addAttribute("board", board);
-		return "sns_detail";
+	    model.addAttribute("rd", rd);
+	    model.addAttribute("c", c);
+	    model.addAttribute("pageNum", pageNum);
+	    model.addAttribute("board", board);
+	    model.addAttribute("good_board", good_board);
+	    
+	    return "sns_detail";
 	}
 
 	@RequestMapping("/snslist")

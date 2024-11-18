@@ -177,13 +177,46 @@
                 <span style="font-size: 24px; font-family: 'Gothic A1', sans-serif;">${board.sns_content}</span>
             </div>
 
-            <!-- 추천버튼 -->
-            <div class="recomend_box">
-            <a href="#" class="recomend">
+<!-- 추천버튼 -->
+<c:choose>
+    <c:when test="${board.sns_no == good_board.sns_no && sessionScope.member.user_id == good_board.user_id}">
+        <div class="recomend_box">
+            <a href="#" class="recomend" onclick="toggleLike(event, ${board.sns_no})">
+                <br><i class="fa-solid fa-fire" style="font-size: 32px; color: #ff0000;"></i><br>
+                <span class="run">RUN</span>
+            </a>
+        </div>
+    </c:when>
+    <c:otherwise>
+        <div class="recomend_box">
+            <a href="#" class="recomend" onclick="toggleLike(event, ${board.sns_no})">
                 <br><i class="fa-solid fa-fire" style="font-size: 32px; color: #333333;"></i><br>
                 <span class="run">RUN</span>
             </a>
-            </div>
+        </div>
+    </c:otherwise>
+</c:choose>
+
+<script>
+function toggleLike(event, sns_no) {
+    event.preventDefault(); // 이 줄을 활성화하여 새로고침 방지
+
+    fetch('/good/toggleGood?sns_no=' + sns_no, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    }).then(response => response.json())
+      .then(data => {
+          console.log("좋아요 토글 결과:", data);
+          location.reload(); // 새로고침
+      })
+      .catch(error => {
+          console.error("오류 발생:", error);
+      });
+}
+
+</script>
 
             <!-- 수정, 삭제 글목록 -->
             <!-- 로그인 아이디와 글쓴이가 다를때 수정, 삭제가 안보이게함 -->
