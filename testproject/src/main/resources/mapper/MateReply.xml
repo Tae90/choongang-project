@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.dao.MateReplyDAO">
+
+	<!-- Use type aliases to avoid typing the full classname every time. -->
+	<resultMap id="rbResult"          type="rb">
+		<result property="recruit_r_no"	      column="recruit_r_no" />
+		<result property="recruit_no"    	  column="recruit_no" />
+		<result property="user_id"  		  column="user_id" />
+		<result property="recruit_r_step"     column="recruit_r_step" />
+		<result property="recruit_r_level"    column="recruit_r_level" />
+		<result property="recruit_r_content"  column="recruit_r_content" />
+		<result property="recruit_r_date" 	  column="recruit_r_date" />
+		<result property="recruit_r_ref" 	  column="recruit_r_ref" />
+		<result property="recruit_r_del" 	  column="recruit_r_del" />
+		<result property="recruit_r_parent"   column="recruit_r_parent" />			
+		<result property="user_nickname"   	  column="user_nickname" />
+		<result property="user_photo"   	  column="user_photo" />
+		<result property="parent_nickname"    column="parent_nickname" />		
+	</resultMap>
+
+	
+	<select id="list" parameterType="int" resultMap="rbResult">
+	SELECT 
+    		s1.*,                               
+    		at1.user_nickname AS user_nickname, 
+    		at1.user_photo AS user_photo,       
+    		at2.user_nickname AS parent_nickname
+		FROM (
+	    	SELECT r.*,  
+        		ROW_NUMBER() OVER (ORDER BY r.recruit_r_ref, r.recruit_r_step) AS rn  
+    		FROM recruit_r r
+		) s1
+			LEFT JOIN runner at1 ON s1.user_id = at1.user_id 
+			LEFT JOIN recruit_r s2 ON s1.recruit_r_parent = s2.recruit_r_no  
+			LEFT JOIN runner at2 ON s2.user_id = at2.user_id  
+		WHERE s1.recruit_no = #{num}
+	</select>	
+	
+	<select id="select" parameterType="int" resultType="rb">
+		select * from recruit_r where recruit_r_no=#{rno}
+	</select>
+		
+	<insert id="insert" parameterType="rb" >
+			insert into recruit_r values (
+			recruit_r_no_seq.nextval,
+			#{recruit_no},
+			#{user_id},
+			#{recruit_r_step},
+			#{recruit_r_level},
+			#{recruit_r_content},
+			sysdate,
+			#{recruit_r_ref},
+			0,
+			#{recruit_r_parent}
+			)
+	</insert>
+	
+	<update id="update" parameterType="rb">
+		update recruit_r set recruit_r_content=#{recruit_r_content},
+			recruit_r_date=sysdate where recruit_r_no=#{recruit_r_no} 
+	</update>
+
+	<update id="delete" parameterType="int">
+		update recruit_r set recruit_r_del = 1 where recruit_r_no = #{recruit_r_no}
+	</update>
+	
+	<select id="getMaxNum" resultType="int">
+		select nvl(max(recruit_r_ref),0)+1 from recruit_r where recruit_no=#{recruit_no}	
+	</select>
+
+	<select id="getMaxNum2" resultType="int">
+		select nvl(max(recruit_r_step), 0)+1 from recruit_r where recruit_r_parent= #{recruit_r_no} 
+	</select>
+
+	<update id="updateRe" parameterType="rb">
+		update recruit_r set recruit_r_step = recruit_r_step + 1
+			where recruit_r_parent=#{recruit_r_no} and recruit_r_step > #{recruit_r_step}		
+	</update>
+	
+	<select id="getChild" parameterType="int">
+		    select nvl(min(recruit_r_step),0) from recruit_r where recruit_r_step > #{recruit_r_step} 
+		    	and recruit_r_level &lt;= #{recruit_r_level} and recruit_r_ref = #{recruit_r_ref} order by recruit_r_step
+	</select>	
+	
+	<update id="updateStep" parameterType="rb">
+		update recruit_r set recruit_r_step = recruit_r_step + 1 
+			where recruit_r_ref=#{recruit_r_ref} and recruit_r_step >= #{recruit_r_step}
+	</update>
+	
+	
+	<select id="rgetdetail" parameterType="int" resultType="recruit">
+		select * from recruit where recruit_no=#{no}
+	</select>
+		
+</mapper>
