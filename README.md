@@ -1,6 +1,6 @@
 Runaway
 
-러닝을 좋아하는 사람들을 위한 정보 공유 및 크루 모집 커뮤니티 사이트
+러닝을 즐기는 사용자들이 정보를 공유하고 크루를 모집할 수 있는 러닝 커뮤니티 & 소셜 플랫폼
 
 ![image](https://github.com/user-attachments/assets/cfdcce03-3e52-463b-a74a-97a5b1356722)
 
