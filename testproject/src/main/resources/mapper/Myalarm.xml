@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.dao.MyalarmDAO">
+	<!-- 알람 게시판 총갯수 구하기 -->
+	<select id="getTotal" parameterType="alarm" resultType="int">
+		select
+		count(*) from alarm al, recruit r
+		where al.recruit_no = r.recruit_no and al.user_id=#{user_id} AND r.recruit_del = 0
+	</select>
+	<!-- 알람 게시판 목록 -->
+	<select id="alarmList" parameterType="alarm" resultType="alarm">
+	SELECT *
+	FROM (
+    	SELECT a.*, ROWNUM AS rn
+    	FROM (
+	        SELECT al.* 
+        	FROM alarm al
+        	INNER JOIN recruit r ON al.recruit_no = r.recruit_no
+        	WHERE al.user_id = #{user_id}
+           	AND r.recruit_del = 0
+        	ORDER BY al.alarm_no DESC
+    	) a 
+	) 
+	WHERE rn BETWEEN #{startRow} AND #{endRow}
+
+
+	</select>
+	<!-- 알람 게시판 글정보 구하기 -->
+	<select id="getDetail" parameterType="int" resultType="alarm">
+		select *
+		from alarm where alarm_no = #{alarm_no}
+	</select>
+	
+	<!-- 글쓴 사람의 ID를 가져온다 -->
+	<select id="getWriterID" parameterType="int" resultType="string">
+    select user_id from recruit where recruit_no = #{recruit_no}
+	</select>
+	
+	<update id="read" parameterType="int">
+		update alarm set alarm_date_readcount = 1 where alarm_no = #{alarm_no}
+	</update>
+	
+</mapper>
